@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: fundacionfomentodb
+  server:
+    port: 8080
+  
+  # Configuración específica para MySQL
+  datasource:
+    url: jdbc:mysql://localhost:3306/fundacionfomentodb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+    username: "root"
+    password: Sami_1723
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  # Configuración JPA optimizada para MySQL
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        connection:
+          provider_disables_autocommit: true
+        cache:
+          use_second_level_cache: false
+        temp:
+          use_jdbc_metadata_defaults: false
+    open-in-view: false
+  
+  # Configuración de Jackson para fechas
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+    locale: es_CO
+    date-format: yyyy-MM-dd HH:mm:ss
+  
+  # Configuración MVC
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+# Configuración de logging específica para MySQL
+logging:
+  level:
+    root: INFO
+    com.fundacionfomentodb: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.zaxxer.hikari: INFO
+    org.springframework.security: DEBUG
+
+# Configuración de Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: true
+
+# Configuración específica para MySQL
+mysql:
+  connection:
+    timeout: 30
+    socket-timeout: 30
+  charset: utf8mb4
+  collation: utf8mb4_unicode_ci
