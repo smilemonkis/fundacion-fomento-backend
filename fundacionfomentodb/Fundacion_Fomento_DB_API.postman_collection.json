@@ -1,0 +1,1290 @@
+{
+	"info": {
+		"_postman_id": "fundacion-fomento-db-api",
+		"name": "Fundación Fomento DB API",
+		"description": "API completa para el sistema de gestión de donaciones y proyectos de la Fundación Fomento",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@fundacion.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "logout"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "Crear Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"usuario@ejemplo.com\",\n  \"password\": \"password123\",\n  \"rol\": \"ESTUDIANTE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/usuarios",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "usuarios"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuario por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/usuarios/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "usuarios", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/usuarios?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "usuarios"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"nuevo@email.com\",\n  \"rol\": \"ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/usuarios/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "usuarios", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activar Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/usuarios/1/activar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "usuarios", "1", "activar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desactivar Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/usuarios/1/desactivar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "usuarios", "1", "desactivar"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Aliados Naturales",
+			"item": [
+				{
+					"name": "Crear Aliado Natural",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"aliado@natural.com\",\n  \"password\": \"password123\",\n  \"documento\": \"12345678\",\n  \"tipoDocumento\": \"CC\",\n  \"nombre\": \"Juan Pérez\",\n  \"telefono\": \"3001234567\",\n  \"direccion\": \"Calle 123 #45-67\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-naturales",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-naturales"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Aliado Natural por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-naturales/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-naturales", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Aliado Natural por Documento",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-naturales/documento/12345678",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-naturales", "documento", "12345678"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Aliados Naturales",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-naturales?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-naturales"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Aliado Natural",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Juan Carlos Pérez\",\n  \"telefono\": \"3009876543\",\n  \"direccion\": \"Calle 456 #78-90\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-naturales/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-naturales", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Aliado Natural",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-naturales/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-naturales", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Aliados Jurídicos",
+			"item": [
+				{
+					"name": "Crear Aliado Jurídico",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"empresa@juridica.com\",\n  \"password\": \"password123\",\n  \"nit\": \"900123456-1\",\n  \"razonSocial\": \"Empresa Ejemplo S.A.S\",\n  \"representante\": \"María García\",\n  \"telefono\": \"6012345678\",\n  \"direccion\": \"Carrera 7 #32-16\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-juridicos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-juridicos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Aliado Jurídico por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-juridicos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-juridicos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Aliado Jurídico por NIT",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-juridicos/nit/900123456-1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-juridicos", "nit", "900123456-1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Aliados Jurídicos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-juridicos?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-juridicos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Aliado Jurídico",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"razonSocial\": \"Empresa Ejemplo Actualizada S.A.S\",\n  \"representante\": \"María Elena García\",\n  \"telefono\": \"6018765432\",\n  \"direccion\": \"Carrera 15 #93-47\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-juridicos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-juridicos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Aliado Jurídico",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/aliados-juridicos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "aliados-juridicos", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Convocatorias",
+			"item": [
+				{
+					"name": "Crear Convocatoria",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Convocatoria de Becas 2024\",\n  \"descripcion\": \"Convocatoria para otorgar becas a estudiantes destacados\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2024-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Convocatoria por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Convocatorias",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Convocatorias Activas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias/activas?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias", "activas"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Convocatoria",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Convocatoria de Becas 2024 - Actualizada\",\n  \"descripcion\": \"Convocatoria actualizada para otorgar becas a estudiantes destacados\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activar Convocatoria",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias/1/activar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias", "1", "activar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desactivar Convocatoria",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias/1/desactivar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias", "1", "desactivar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Convocatoria",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/convocatorias/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "convocatorias", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Proyectos",
+			"item": [
+				{
+					"name": "Crear Proyecto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigo\": \"PROJ-001\",\n  \"nombre\": \"Proyecto de Educación Rural\",\n  \"descripcion\": \"Proyecto para mejorar la educación en zonas rurales\",\n  \"fechaInicio\": \"2024-01-01\",\n  \"fechaFin\": \"2024-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Proyecto por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Proyecto por Código",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos/codigo/PROJ-001",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos", "codigo", "PROJ-001"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Proyectos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Proyectos Activos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos/activos?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos", "activos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Proyecto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Proyecto de Educación Rural - Actualizado\",\n  \"descripcion\": \"Proyecto actualizado para mejorar la educación en zonas rurales\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activar Proyecto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos/1/activar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos", "1", "activar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desactivar Proyecto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos/1/desactivar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos", "1", "desactivar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Proyecto",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/proyectos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "proyectos", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Donaciones",
+			"item": [
+				{
+					"name": "Crear Donación",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 1,\n  \"monto\": 1000000.00,\n  \"destino\": \"PROYECTO_ACTIVO\",\n  \"proyectoId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Donación por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Donaciones",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Donaciones por Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones/usuario/1?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones", "usuario", "1"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Donaciones por Proyecto",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones/proyecto/1?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones", "proyecto", "1"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Donación",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"monto\": 1500000.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Aprobar Donación",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones/1/aprobar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones", "1", "aprobar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rechazar Donación",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones/1/rechazar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones", "1", "rechazar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Donación",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/donaciones/1/cancelar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "donaciones", "1", "cancelar"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Inscripciones",
+			"item": [
+				{
+					"name": "Crear Inscripción",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 1,\n  \"convocatoriaId\": 1,\n  \"observaciones\": \"Estudiante destacado en matemáticas\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Inscripción por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Inscripciones",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Inscripciones por Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones/usuario/1?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones", "usuario", "1"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Inscripciones por Convocatoria",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones/convocatoria/1?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones", "convocatoria", "1"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Inscripción",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"observaciones\": \"Estudiante destacado en matemáticas y ciencias\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Aprobar Inscripción",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones/1/aprobar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones", "1", "aprobar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rechazar Inscripción",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones/1/rechazar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones", "1", "rechazar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Inscripción",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/inscripciones/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "inscripciones", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

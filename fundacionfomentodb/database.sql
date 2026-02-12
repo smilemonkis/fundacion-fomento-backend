@@ -1,0 +1,98 @@
+CREATE DATABASE IF NOT EXISTS `fundacionfomentodb` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `fundacionfomentodb`;
+
+CREATE TABLE IF NOT EXISTS usuario (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  rol ENUM('ADMIN', 'ALIADO_NAT', 'ALIADO_JUR', 'ESTUDIANTE', 'ASPIRANTE') NOT NULL,
+  activo TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_usuario_email (email),
+  INDEX idx_usuario_rol (rol)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS aliado_natural (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL UNIQUE,
+  documento VARCHAR(100) NOT NULL UNIQUE,
+  tipo_documento ENUM('CC', 'TI', 'CE', 'PASAPORTE') NOT NULL,
+  nombre VARCHAR(255) NOT NULL,
+  telefono VARCHAR(100) NOT NULL,
+  direccion VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_aliado_nat_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS aliado_juridico (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL UNIQUE,
+  nit VARCHAR(100) NOT NULL UNIQUE,
+  razon_social VARCHAR(255) NOT NULL,
+  representante VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  telefono VARCHAR(100) NOT NULL,
+  direccion VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_aliado_jur_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS convocatoria (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  titulo VARCHAR(255) NOT NULL,
+  descripcion TEXT NOT NULL,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,
+  activa TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_conv_activa (activa),
+  INDEX idx_conv_fechas (fecha_inicio, fecha_fin)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS proyecto (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(100) NOT NULL UNIQUE,
+  nombre VARCHAR(255) NOT NULL,
+  descripcion TEXT NOT NULL,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,
+  activo TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_proyecto_activo (activo)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS donacion (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  monto DECIMAL(15,2) NOT NULL,
+  destino ENUM('LIBRE_INVERSION', 'PROYECTO_ACTIVO') NOT NULL,
+  proyecto_id INT NULL,
+  estado ENUM('PENDIENTE', 'COMPLETADA', 'RECHAZADA', 'CANCELADA') NOT NULL DEFAULT 'PENDIENTE',
+  fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_donacion_usuario (usuario_id),
+  INDEX idx_donacion_proyecto (proyecto_id),
+  INDEX idx_donacion_estado (estado),
+  CONSTRAINT fk_donacion_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT fk_donacion_proyecto FOREIGN KEY (proyecto_id) REFERENCES proyecto(id) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inscripcion (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  convocatoria_id INT NOT NULL,
+  estado ENUM('PENDIENTE', 'ACEPTADO', 'RECHAZADO') NOT NULL DEFAULT 'PENDIENTE',
+  observaciones VARCHAR(500) NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_inscripcion_usuario (usuario_id),
+  INDEX idx_inscripcion_conv (convocatoria_id),
+  INDEX idx_inscripcion_estado (estado),
+  UNIQUE KEY uk_inscripcion_usuario_convocatoria (usuario_id, convocatoria_id),
+  CONSTRAINT fk_inscripcion_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT fk_inscripcion_conv FOREIGN KEY (convocatoria_id) REFERENCES convocatoria(id) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB;
