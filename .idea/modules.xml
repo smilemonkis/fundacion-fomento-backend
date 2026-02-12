@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/fundacionfomentodb.iml" filepath="$PROJECT_DIR$/.idea/fundacionfomentodb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fundacionfomentodb/fundacionfomentodb.iml" filepath="$PROJECT_DIR$/fundacionfomentodb/fundacionfomentodb.iml" />
     </modules>
   </component>
 </project>
