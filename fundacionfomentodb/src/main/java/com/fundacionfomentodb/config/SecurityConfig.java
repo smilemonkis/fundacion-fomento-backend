@@ -33,7 +33,6 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new org.springframework.web.cors.CorsConfiguration();
-                    // Permitimos que el frontend (Vite/React) se conecte
                     config.setAllowedOrigins(java.util.List.of("http://localhost:5173", "http://localhost:3000"));
                     config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(java.util.List.of("*"));
@@ -42,12 +41,16 @@ public class SecurityConfig {
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        // 1. AGREGAMOS SWAGGER AQUÍ TAMBIÉN (Para asegurar acceso)
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/aliados-naturales").permitAll()
                         .requestMatchers("/api/v1/aliados-juridicos").permitAll()
 
-                        // 2. REGLA DE SEGURIDAD PARA EL ADMIN (Contexto Fundación)
-                        .requestMatchers("/api/v1/usuarios/**").hasRole("ADMIN")
+                        // 2. PERMITIMOS TODO EN USUARIOS TEMPORALMENTE
+                        // Esto es para que puedas crear tu primer ADMIN sin errores
+                        .requestMatchers("/api/v1/usuarios/**").permitAll()
 
                         .anyRequest().authenticated()
                 )

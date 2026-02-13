@@ -28,6 +28,8 @@ public class UsuarioService {
         }
 
         Usuario usuario = Usuario.builder()
+                .nombre(request.nombre())   // <-- NUEVO
+                .apellido(request.apellido()) // <-- NUEVO
                 .email(request.email())
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .rol(Usuario.RolEnum.valueOf(request.rol()))
@@ -37,7 +39,6 @@ public class UsuarioService {
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         return toResponseDto(usuarioGuardado);
     }
-
     @Transactional(readOnly = true)
     public UsuarioResponse obtenerUsuarioPorId(Integer id) {
         return usuarioRepository.findById(id)

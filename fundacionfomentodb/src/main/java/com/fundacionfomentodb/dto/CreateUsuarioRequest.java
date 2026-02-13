@@ -5,6 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record CreateUsuarioRequest(
+        @NotBlank(message = "El nombre es requerido")
+        String nombre,
+
+        @NotBlank(message = "El apellido es requerido")
+        String apellido,
+
         @NotBlank(message = "El correo es requerido")
         @Email(message = "El correo debe ser válido")
         String email,
