@@ -40,6 +40,8 @@ public class AuthController {
             LoginResponse response = new LoginResponse(
                     token,
                     usuario.getId(),
+                    usuario.getNombre(),
+                    usuario.getApellido() ,
                     usuario.getEmail(),
                     usuario.getRol().name(),
                     usuario.getActivo()

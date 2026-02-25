@@ -56,6 +56,10 @@ public class Usuario {
         }
     }
 
+    public String getPassword() {
+        return this.passwordHash;
+    }
+
     public enum RolEnum {
         ADMIN, ALIADO_NAT, ALIADO_JUR, ESTUDIANTE, ASPIRANTE
     }

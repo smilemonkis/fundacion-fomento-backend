@@ -107,6 +107,8 @@ public class UsuarioService {
     private UsuarioResponse toResponseDto(Usuario usuario) {
         return new UsuarioResponse(
                 usuario.getId(),
+                usuario.getNombre(),
+                usuario.getApellido(),
                 usuario.getEmail(),
                 usuario.getRol().name(),
                 usuario.getActivo(),
