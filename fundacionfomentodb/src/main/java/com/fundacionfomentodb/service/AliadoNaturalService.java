@@ -33,13 +33,14 @@ public class AliadoNaturalService {
         if (usuarioRepository.findByEmail(request.email()).isPresent()) {
             throw new BadRequestException("El email " + request.email() + " ya está registrado");
         }
-        
+
         Usuario usuario = Usuario.builder()
-            .email(request.email())
-            .passwordHash(passwordEncoder.encode(request.password()))
-            .rol(Usuario.RolEnum.ALIADO_NAT)
-            .activo(true)
-            .build();
+                .email(request.email())
+                .nombre(request.nombre())
+                .passwordHash(passwordEncoder.encode(request.password()))
+                .rol(Usuario.RolEnum.ALIADO_NAT)
+                .activo(true)
+                .build();
         
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         

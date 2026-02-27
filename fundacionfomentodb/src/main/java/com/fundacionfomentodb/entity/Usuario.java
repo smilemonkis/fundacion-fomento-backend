@@ -22,7 +22,6 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // --- CAMPOS NUEVOS AGREGADOS ---
     @Column(length = 100)
     private String nombre;
 

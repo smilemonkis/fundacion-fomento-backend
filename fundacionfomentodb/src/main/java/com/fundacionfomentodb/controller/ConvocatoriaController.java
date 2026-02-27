@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/convocatorias")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8081")
 public class ConvocatoriaController {
 
     private final ConvocatoriaService convocatoriaService;

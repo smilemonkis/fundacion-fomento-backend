@@ -11,6 +11,10 @@ public record ProyectoResponse(
         LocalDate fechaInicio,
         LocalDate fechaFin,
         Boolean activo,
+        String imagenUrl,
+        Integer beneficiarios,
+        String presupuesto,
+        Integer progreso,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

@@ -40,6 +40,18 @@ public class Proyecto {
     @Column(nullable = false)
     private Boolean activo;
 
+    @Column(length = 500)
+    private String imagenUrl;
+
+    @Column
+    private Integer beneficiarios;
+
+    @Column(length = 50)
+    private String presupuesto;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer progreso;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -50,6 +62,7 @@ public class Proyecto {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        if (this.progreso == null) this.progreso = 0;
     }
 
     @PreUpdate
@@ -57,4 +70,3 @@ public class Proyecto {
         this.updatedAt = LocalDateTime.now();
     }
 }
-

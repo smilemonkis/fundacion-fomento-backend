@@ -33,13 +33,14 @@ public class AliadoJuridicoService {
         if (usuarioRepository.findByEmail(request.email()).isPresent()) {
             throw new BadRequestException("El email " + request.email() + " ya está registrado");
         }
-        
+
         Usuario usuario = Usuario.builder()
-            .email(request.email())
-            .passwordHash(passwordEncoder.encode(request.password()))
-            .rol(Usuario.RolEnum.ALIADO_JUR)
-            .activo(true)
-            .build();
+                .email(request.email())
+                .nombre(request.razonSocial())
+                .passwordHash(passwordEncoder.encode(request.password()))
+                .rol(Usuario.RolEnum.ALIADO_JUR)
+                .activo(true)
+                .build();
         
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         

@@ -32,10 +32,13 @@ public class ProyectoService {
                 .fechaInicio(request.fechaInicio())
                 .fechaFin(request.fechaFin())
                 .activo(true)
+                .imagenUrl(request.imagenUrl())
+                .beneficiarios(request.beneficiarios())
+                .presupuesto(request.presupuesto())
+                .progreso(request.progreso() != null ? request.progreso() : 0)
                 .build();
 
-        Proyecto proyectoGuardado = proyectoRepository.save(proyecto);
-        return toResponseDto(proyectoGuardado);
+        return toResponseDto(proyectoRepository.save(proyecto));
     }
 
     @Transactional(readOnly = true)
@@ -55,13 +58,11 @@ public class ProyectoService {
     @Transactional(readOnly = true)
     public Page<ProyectoResponse> listarProyectos(Boolean activo, Pageable pageable) {
         Page<Proyecto> resultado;
-        
         if (activo != null) {
             resultado = proyectoRepository.findByActivo(activo, pageable);
         } else {
             resultado = proyectoRepository.findAll(pageable);
         }
-        
         return resultado.map(this::toResponseDto);
     }
 
@@ -75,57 +76,50 @@ public class ProyectoService {
         Proyecto proyecto = proyectoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
 
-        if (request.codigo() != null && !request.codigo().isBlank() 
-            && !proyecto.getCodigo().equals(request.codigo())) {
-            
+        if (request.codigo() != null && !request.codigo().isBlank()
+                && !proyecto.getCodigo().equals(request.codigo())) {
             if (proyectoRepository.findByCodigo(request.codigo()).isPresent()) {
                 throw new BadRequestException("El código ya está en uso");
             }
             proyecto.setCodigo(request.codigo());
         }
-
-        if (request.nombre() != null && !request.nombre().isBlank()) {
+        if (request.nombre() != null && !request.nombre().isBlank())
             proyecto.setNombre(request.nombre());
-        }
-
-        if (request.descripcion() != null && !request.descripcion().isBlank()) {
+        if (request.descripcion() != null && !request.descripcion().isBlank())
             proyecto.setDescripcion(request.descripcion());
-        }
-
-        if (request.fechaInicio() != null) {
+        if (request.fechaInicio() != null)
             proyecto.setFechaInicio(request.fechaInicio());
-        }
-
-        if (request.fechaFin() != null) {
+        if (request.fechaFin() != null)
             proyecto.setFechaFin(request.fechaFin());
-        }
+        if (request.imagenUrl() != null)
+            proyecto.setImagenUrl(request.imagenUrl());
+        if (request.beneficiarios() != null)
+            proyecto.setBeneficiarios(request.beneficiarios());
+        if (request.presupuesto() != null)
+            proyecto.setPresupuesto(request.presupuesto());
+        if (request.progreso() != null)
+            proyecto.setProgreso(request.progreso());
 
-        Proyecto proyectoActualizado = proyectoRepository.save(proyecto);
-        return toResponseDto(proyectoActualizado);
+        return toResponseDto(proyectoRepository.save(proyecto));
     }
 
     public ProyectoResponse activarProyecto(Integer id) {
         Proyecto proyecto = proyectoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
-        
         proyecto.setActivo(true);
-        Proyecto proyectoActualizado = proyectoRepository.save(proyecto);
-        return toResponseDto(proyectoActualizado);
+        return toResponseDto(proyectoRepository.save(proyecto));
     }
 
     public ProyectoResponse desactivarProyecto(Integer id) {
         Proyecto proyecto = proyectoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
-        
         proyecto.setActivo(false);
-        Proyecto proyectoActualizado = proyectoRepository.save(proyecto);
-        return toResponseDto(proyectoActualizado);
+        return toResponseDto(proyectoRepository.save(proyecto));
     }
 
     public void eliminarProyecto(Integer id) {
         Proyecto proyecto = proyectoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
-        
         proyectoRepository.delete(proyecto);
     }
 
@@ -138,6 +132,10 @@ public class ProyectoService {
                 proyecto.getFechaInicio(),
                 proyecto.getFechaFin(),
                 proyecto.getActivo(),
+                proyecto.getImagenUrl(),
+                proyecto.getBeneficiarios(),
+                proyecto.getPresupuesto(),
+                proyecto.getProgreso(),
                 proyecto.getCreatedAt(),
                 proyecto.getUpdatedAt()
         );

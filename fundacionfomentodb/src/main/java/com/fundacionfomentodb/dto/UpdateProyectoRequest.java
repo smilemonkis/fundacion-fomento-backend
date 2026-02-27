@@ -7,6 +7,10 @@ public record UpdateProyectoRequest(
         String nombre,
         String descripcion,
         LocalDate fechaInicio,
-        LocalDate fechaFin
+        LocalDate fechaFin,
+        String imagenUrl,
+        Integer beneficiarios,
+        String presupuesto,
+        Integer progreso
 ) {
 }

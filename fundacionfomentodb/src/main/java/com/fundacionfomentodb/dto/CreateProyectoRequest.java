@@ -20,6 +20,11 @@ public record CreateProyectoRequest(
 
         @NotNull(message = "La fecha de fin es requerida")
         @Future(message = "La fecha de fin debe ser futura")
-        LocalDate fechaFin
+        LocalDate fechaFin,
+
+        String imagenUrl,
+        Integer beneficiarios,
+        String presupuesto,
+        Integer progreso
 ) {
 }

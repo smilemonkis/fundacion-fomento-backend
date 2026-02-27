@@ -1,8 +1,14 @@
 spring:
   application:
     name: fundacionfomentodb
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
   server:
     port: 8080
+  # ... resto igual
 
   # Configuración específica para MySQL
   datasource:
@@ -87,3 +93,9 @@ mysql:
     socket-timeout: 30
   charset: utf8mb4
   collation: utf8mb4_unicode_ci
+
+# Cloudinary
+cloudinary:
+  cloud-name: dm9ojlpnk
+  api-key: 933263734342596
+  api-secret: cYdtekUj2f-nvXUmbv3J5AAUTWo

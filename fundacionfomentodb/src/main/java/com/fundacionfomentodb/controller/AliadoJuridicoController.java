@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/aliados-juridicos")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8081")
 public class AliadoJuridicoController {
     
     private final AliadoJuridicoService aliadoJuridicoService;

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/aliados-naturales")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8081")
 public class AliadoNaturalController {
     
     private final AliadoNaturalService aliadoNaturalService;
