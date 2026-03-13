@@ -1,35 +1,38 @@
 package com.fundacionfomentodb.entity;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "donacion", indexes = {
-        @Index(name = "idx_donacion_usuario", columnList = "usuario_id"),
-        @Index(name = "idx_donacion_proyecto", columnList = "proyecto_id"),
-        @Index(name = "idx_donacion_estado", columnList = "estado")
+        @Index(name = "idx_donacion_usuario",  columnList = "usuario_id"),
+        @Index(name = "idx_donacion_proyecto",  columnList = "proyecto_id"),
+        @Index(name = "idx_donacion_estado",    columnList = "estado")
 })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public
-class Donacion {
+public class Donacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    // Null cuando dona sin cuenta
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = true)
     private Usuario usuario;
+
+    // Datos del donante sin cuenta — nombre obligatorio, email obligatorio
+    @Column(name = "donante_nombre", length = 150)
+    private String donanteNombre;
+
+    @Column(name = "donante_email", length = 150)
+    private String donanteEmail;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal monto;
@@ -52,9 +55,7 @@ class Donacion {
     @PrePersist
     protected void onCreate() {
         this.fecha = LocalDateTime.now();
-        if (this.estado == null) {
-            this.estado = EstadoEnum.PENDIENTE;
-        }
+        if (this.estado == null) this.estado = EstadoEnum.PENDIENTE;
     }
 
     public enum DestinoEnum {

@@ -8,5 +8,6 @@ public record CreateBannerRequest(
         @NotBlank String imagenUrl,
         @NotBlank String ctaTexto,
         @NotBlank String ctaLink,
+        String ctaColor,
         Integer orden
 ) {}

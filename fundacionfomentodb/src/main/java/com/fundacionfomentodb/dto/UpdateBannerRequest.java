@@ -6,6 +6,7 @@ public record UpdateBannerRequest(
         String imagenUrl,
         String ctaTexto,
         String ctaLink,
+        String ctaColor,
         Integer orden,
         Boolean activo
 ) {}

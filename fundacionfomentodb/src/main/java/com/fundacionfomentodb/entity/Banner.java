@@ -34,6 +34,10 @@ public class Banner {
     @Column(name = "cta_link", nullable = false)
     private String ctaLink;
 
+    @Column(name = "cta_color")
+    @Builder.Default
+    private String ctaColor = "default";
+
     @Column(nullable = false)
     @Builder.Default
     private Integer orden = 0;

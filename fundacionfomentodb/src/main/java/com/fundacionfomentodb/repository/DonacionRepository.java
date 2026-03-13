@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DonacionRepository extends JpaRepository<Donacion, Integer> {
     Page<Donacion> findByUsuarioId(Integer usuarioId, Pageable pageable);
-
     Page<Donacion> findByEstado(Donacion.EstadoEnum estado, Pageable pageable);
-
     Page<Donacion> findByProyectoId(Integer proyectoId, Pageable pageable);
 }

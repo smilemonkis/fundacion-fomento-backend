@@ -1,23 +1,15 @@
 package com.fundacionfomentodb.service;
 
-import com.fundacionfomentodb.dto.CreateDonacionRequest;
-import com.fundacionfomentodb.dto.UpdateDonacionRequest;
-import com.fundacionfomentodb.dto.DonacionResponse;
+import com.fundacionfomentodb.dto.*;
 import com.fundacionfomentodb.entity.Donacion;
 import com.fundacionfomentodb.entity.Proyecto;
-import com.fundacionfomentodb.entity.Usuario;
+import com.fundacionfomentodb.exception.ResourceNotFoundException;
 import com.fundacionfomentodb.repository.DonacionRepository;
 import com.fundacionfomentodb.repository.ProyectoRepository;
-import com.fundacionfomentodb.repository.UsuarioRepository;
-import com.fundacionfomentodb.exception.BadRequestException;
-import com.fundacionfomentodb.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -25,151 +17,64 @@ import java.math.BigDecimal;
 public class DonacionService {
 
     private final DonacionRepository donacionRepository;
-    private final UsuarioRepository usuarioRepository;
     private final ProyectoRepository proyectoRepository;
 
-    public DonacionResponse crearDonacion(CreateDonacionRequest request) {
-        Usuario usuario = usuarioRepository.findById(request.usuarioId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-
-        if (!usuario.getActivo()) {
-            throw new BadRequestException("El usuario no está activo");
-        }
-
-        if (request.monto().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new BadRequestException("El monto debe ser mayor a cero");
-        }
-
+    // Donación pública sin cuenta
+    public DonacionResponse crearPublica(CreateDonacionPublicaRequest req) {
         Proyecto proyecto = null;
-        if (request.proyectoId() != null) {
-            proyecto = proyectoRepository.findById(request.proyectoId())
+        Donacion.DestinoEnum destino = Donacion.DestinoEnum.LIBRE_INVERSION;
+
+        if ("PROYECTO_ACTIVO".equals(req.destino()) && req.proyectoId() != null) {
+            proyecto = proyectoRepository.findById(req.proyectoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
-            
-            if (!proyecto.getActivo()) {
-                throw new BadRequestException("El proyecto no está activo");
-            }
+            destino = Donacion.DestinoEnum.PROYECTO_ACTIVO;
         }
 
-        Donacion donacion = Donacion.builder()
-                .usuario(usuario)
-                .monto(request.monto())
-                .destino(Donacion.DestinoEnum.valueOf(request.destino()))
+        Donacion d = Donacion.builder()
+                .usuario(null)
+                .donanteNombre(req.donanteNombre())
+                .donanteEmail(req.donanteEmail())
+                .monto(req.monto())
+                .destino(destino)
                 .proyecto(proyecto)
                 .estado(Donacion.EstadoEnum.PENDIENTE)
                 .build();
 
-        Donacion donacionGuardada = donacionRepository.save(donacion);
-        return toResponseDto(donacionGuardada);
+        return toDto(donacionRepository.save(d));
     }
 
     @Transactional(readOnly = true)
-    public DonacionResponse obtenerDonacionPorId(Integer id) {
-        return donacionRepository.findById(id)
-                .map(this::toResponseDto)
+    public Page<DonacionResponse> listarTodas(Pageable pageable) {
+        return donacionRepository.findAll(pageable).map(this::toDto);
+    }
+
+    public DonacionResponse confirmar(Integer id) { return cambiarEstado(id, Donacion.EstadoEnum.COMPLETADA); }
+    public DonacionResponse rechazar(Integer id)  { return cambiarEstado(id, Donacion.EstadoEnum.RECHAZADA);  }
+    public DonacionResponse cancelar(Integer id)  { return cambiarEstado(id, Donacion.EstadoEnum.CANCELADA);  }
+
+    private DonacionResponse cambiarEstado(Integer id, Donacion.EstadoEnum nuevoEstado) {
+        Donacion d = donacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Donación no encontrada"));
+        d.setEstado(nuevoEstado);
+        return toDto(donacionRepository.save(d));
     }
 
-    @Transactional(readOnly = true)
-    public Page<DonacionResponse> listarDonaciones(Integer usuarioId, Integer proyectoId, String estado, Pageable pageable) {
-        Page<Donacion> resultado;
-        
-        if (usuarioId != null) {
-            resultado = donacionRepository.findByUsuarioId(usuarioId, pageable);
-        } else if (proyectoId != null) {
-            resultado = donacionRepository.findByProyectoId(proyectoId, pageable);
-        } else if (estado != null && !estado.isBlank()) {
-            resultado = donacionRepository.findByEstado(Donacion.EstadoEnum.valueOf(estado), pageable);
-        } else {
-            resultado = donacionRepository.findAll(pageable);
-        }
-        
-        return resultado.map(this::toResponseDto);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<DonacionResponse> listarDonacionesPorUsuario(Integer usuarioId, Pageable pageable) {
-        return donacionRepository.findByUsuarioId(usuarioId, pageable)
-                .map(this::toResponseDto);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<DonacionResponse> listarDonacionesPorProyecto(Integer proyectoId, Pageable pageable) {
-        return donacionRepository.findByProyectoId(proyectoId, pageable)
-                .map(this::toResponseDto);
-    }
-
-    public DonacionResponse actualizarDonacion(Integer id, UpdateDonacionRequest request) {
-        Donacion donacion = donacionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Donación no encontrada"));
-
-        if (request.monto() != null && request.monto().compareTo(BigDecimal.ZERO) > 0) {
-            donacion.setMonto(request.monto());
-        }
-
-        if (request.destino() != null && !request.destino().isBlank()) {
-            donacion.setDestino(Donacion.DestinoEnum.valueOf(request.destino()));
-        }
-
-        if (request.proyectoId() != null) {
-            Proyecto proyecto = proyectoRepository.findById(request.proyectoId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
-            donacion.setProyecto(proyecto);
-        }
-
-        Donacion donacionActualizada = donacionRepository.save(donacion);
-        return toResponseDto(donacionActualizada);
-    }
-
-    public DonacionResponse aprobarDonacion(Integer id) {
-        Donacion donacion = donacionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Donación no encontrada"));
-        
-        if (donacion.getEstado() != Donacion.EstadoEnum.PENDIENTE) {
-            throw new BadRequestException("Solo se pueden aprobar donaciones pendientes");
-        }
-        
-        donacion.setEstado(Donacion.EstadoEnum.COMPLETADA);
-        Donacion donacionActualizada = donacionRepository.save(donacion);
-        return toResponseDto(donacionActualizada);
-    }
-
-    public DonacionResponse rechazarDonacion(Integer id) {
-        Donacion donacion = donacionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Donación no encontrada"));
-        
-        if (donacion.getEstado() != Donacion.EstadoEnum.PENDIENTE) {
-            throw new BadRequestException("Solo se pueden rechazar donaciones pendientes");
-        }
-        
-        donacion.setEstado(Donacion.EstadoEnum.RECHAZADA);
-        Donacion donacionActualizada = donacionRepository.save(donacion);
-        return toResponseDto(donacionActualizada);
-    }
-
-    public DonacionResponse cancelarDonacion(Integer id) {
-        Donacion donacion = donacionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Donación no encontrada"));
-        
-        if (donacion.getEstado() == Donacion.EstadoEnum.COMPLETADA) {
-            throw new BadRequestException("No se pueden cancelar donaciones completadas");
-        }
-        
-        donacion.setEstado(Donacion.EstadoEnum.CANCELADA);
-        Donacion donacionActualizada = donacionRepository.save(donacion);
-        return toResponseDto(donacionActualizada);
-    }
-
-    private DonacionResponse toResponseDto(Donacion donacion) {
+    private DonacionResponse toDto(Donacion d) {
+        // Si dona con cuenta usa datos del usuario, si no usa los campos directos
+        String email  = d.getUsuario() != null ? d.getUsuario().getEmail()  : d.getDonanteEmail();
+        String nombre = d.getUsuario() != null ? d.getUsuario().getNombre() : d.getDonanteNombre();
         return new DonacionResponse(
-                donacion.getId(),
-                donacion.getUsuario().getId(),
-                donacion.getUsuario().getEmail(),
-                donacion.getMonto(),
-                donacion.getDestino().name(),
-                donacion.getProyecto() != null ? donacion.getProyecto().getId() : null,
-                donacion.getProyecto() != null ? donacion.getProyecto().getNombre() : null,
-                donacion.getEstado().name(),
-                donacion.getFecha()
+                d.getId(),
+                d.getUsuario() != null ? d.getUsuario().getId() : null,
+                email,
+                nombre,
+                d.getDonanteEmail(),
+                d.getMonto(),
+                d.getDestino().name(),
+                d.getProyecto() != null ? d.getProyecto().getId()     : null,
+                d.getProyecto() != null ? d.getProyecto().getNombre() : null,
+                d.getEstado().name(),
+                d.getFecha() != null ? d.getFecha().toString() : null
         );
     }
 }

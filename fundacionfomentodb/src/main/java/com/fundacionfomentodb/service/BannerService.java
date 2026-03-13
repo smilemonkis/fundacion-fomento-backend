@@ -24,6 +24,7 @@ public class BannerService {
                 .imagenUrl(req.imagenUrl())
                 .ctaTexto(req.ctaTexto())
                 .ctaLink(req.ctaLink())
+                .ctaColor(req.ctaColor() != null ? req.ctaColor() : "default")
                 .orden(req.orden() != null ? req.orden() : 0)
                 .build();
         return toDto(bannerRepository.save(b));
@@ -49,6 +50,7 @@ public class BannerService {
         if (req.imagenUrl() != null) b.setImagenUrl(req.imagenUrl());
         if (req.ctaTexto()  != null) b.setCtaTexto(req.ctaTexto());
         if (req.ctaLink()   != null) b.setCtaLink(req.ctaLink());
+        if (req.ctaColor()  != null) b.setCtaColor(req.ctaColor());
         if (req.orden()     != null) b.setOrden(req.orden());
         if (req.activo()    != null) b.setActivo(req.activo());
         return toDto(bannerRepository.save(b));
@@ -63,8 +65,8 @@ public class BannerService {
     private BannerResponse toDto(Banner b) {
         return new BannerResponse(
                 b.getId(), b.getTitulo(), b.getSubtitulo(), b.getImagenUrl(),
-                b.getCtaTexto(), b.getCtaLink(), b.getOrden(), b.getActivo(),
-                b.getCreatedAt().toString(), b.getUpdatedAt().toString()
+                b.getCtaTexto(), b.getCtaLink(), b.getCtaColor(), b.getOrden(),
+                b.getActivo(), b.getCreatedAt().toString(), b.getUpdatedAt().toString()
         );
     }
 }
