@@ -18,7 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.http.HttpMethod;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -50,13 +50,22 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/aliados-naturales").permitAll()
                         .requestMatchers("/api/v1/aliados-juridicos").permitAll()
-
                         // 2. PERMITIMOS TODO EN USUARIOS TEMPORALMENTE
                         // Esto es para que puedas crear tu primer ADMIN sin errores
                         .requestMatchers("/api/v1/usuarios/**").permitAll()
 
+                        // ← AGREGA ESTAS LÍNEAS:
+                        .requestMatchers(HttpMethod.GET, "/api/v1/proyectos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/noticias/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/parchate/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/oportunidades/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/suscripciones").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/suscripciones/email/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
+
+
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
