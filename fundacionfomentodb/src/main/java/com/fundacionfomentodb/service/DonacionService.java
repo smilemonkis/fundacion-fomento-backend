@@ -3,13 +3,16 @@ package com.fundacionfomentodb.service;
 import com.fundacionfomentodb.dto.*;
 import com.fundacionfomentodb.entity.Donacion;
 import com.fundacionfomentodb.entity.Proyecto;
+import com.fundacionfomentodb.entity.Usuario;
 import com.fundacionfomentodb.exception.ResourceNotFoundException;
 import com.fundacionfomentodb.repository.DonacionRepository;
 import com.fundacionfomentodb.repository.ProyectoRepository;
+import com.fundacionfomentodb.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class DonacionService {
 
     private final DonacionRepository donacionRepository;
     private final ProyectoRepository proyectoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     // Donación pública sin cuenta
     public DonacionResponse crearPublica(CreateDonacionPublicaRequest req) {
@@ -43,6 +47,13 @@ public class DonacionService {
         return toDto(donacionRepository.save(d));
     }
 
+
+
+    @Transactional(readOnly = true)
+    public Page<DonacionResponse> listarPorUsuario(Integer usuarioId, Pageable pageable) {
+        return donacionRepository.findByUsuarioId(usuarioId, pageable).map(this::toDto);
+    }
+
     @Transactional(readOnly = true)
     public Page<DonacionResponse> listarTodas(Pageable pageable) {
         return donacionRepository.findAll(pageable).map(this::toDto);
@@ -51,6 +62,28 @@ public class DonacionService {
     public DonacionResponse confirmar(Integer id) { return cambiarEstado(id, Donacion.EstadoEnum.COMPLETADA); }
     public DonacionResponse rechazar(Integer id)  { return cambiarEstado(id, Donacion.EstadoEnum.RECHAZADA);  }
     public DonacionResponse cancelar(Integer id)  { return cambiarEstado(id, Donacion.EstadoEnum.CANCELADA);  }
+
+    public DonacionResponse crearDesdeAliado(CreateDonacionAliadoRequest req) {
+        Usuario usuario = usuarioRepository.findById(req.usuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        Proyecto proyecto = null;
+        Donacion.DestinoEnum destino = Donacion.DestinoEnum.LIBRE_INVERSION;
+        if ("PROYECTO_ACTIVO".equals(req.destino()) && req.proyectoId() != null) {
+            proyecto = proyectoRepository.findById(req.proyectoId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
+            destino = Donacion.DestinoEnum.PROYECTO_ACTIVO;
+        }
+        Donacion d = Donacion.builder()
+                .usuario(usuario)
+                .monto(req.monto())
+                .destino(destino)
+                .proyecto(proyecto)
+                .estado(Donacion.EstadoEnum.PENDIENTE)
+                .build();
+        return toDto(donacionRepository.save(d));
+    }
+
+
 
     private DonacionResponse cambiarEstado(Integer id, Donacion.EstadoEnum nuevoEstado) {
         Donacion d = donacionRepository.findById(id)

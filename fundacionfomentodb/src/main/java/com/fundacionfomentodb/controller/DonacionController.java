@@ -16,6 +16,14 @@ public class DonacionController {
 
     private final DonacionService donacionService;
 
+    @PostMapping("/aliado")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<DonacionResponse> donarAliado(
+            @RequestBody CreateDonacionAliadoRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(donacionService.crearDesdeAliado(req));
+    }
+
     // Público — cualquiera puede donar sin cuenta
     @PostMapping("/publica")
     public ResponseEntity<DonacionResponse> donarPublico(
@@ -32,6 +40,17 @@ public class DonacionController {
             @RequestParam(defaultValue = "200") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("fecha").descending());
         return ResponseEntity.ok(donacionService.listarTodas(pageable));
+    }
+
+    @GetMapping("/usuario/{usuarioId}")
+    @PreAuthorize("isAuthenticated()") // Solo usuarios logueados
+    public ResponseEntity<Page<DonacionResponse>> listarPorUsuario(
+            @PathVariable Integer usuarioId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("fecha").descending());
+        return ResponseEntity.ok(donacionService.listarPorUsuario(usuarioId, pageable));
     }
 
     @PutMapping("/{id}/aprobar")
