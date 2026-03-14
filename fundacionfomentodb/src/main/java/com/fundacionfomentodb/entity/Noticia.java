@@ -38,9 +38,11 @@ public class Noticia {
     private String autor;
 
     @Column(nullable = false)
-    private Boolean publicado;
+    @Builder.Default
+    private Boolean publicado = false;
 
-    @Column(nullable = false)
+    // Opcional — se llena automáticamente al publicar
+    @Column
     private LocalDate fechaPublicacion;
 
     @Column(nullable = false, updatable = false)
@@ -54,8 +56,14 @@ public class Noticia {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         if (this.publicado == null) this.publicado = false;
+        // Si se crea ya publicada, asignar fecha hoy
+        if (Boolean.TRUE.equals(this.publicado) && this.fechaPublicacion == null) {
+            this.fechaPublicacion = LocalDate.now();
+        }
     }
 
     @PreUpdate
-    protected void onUpdate() { this.updatedAt = LocalDateTime.now(); }
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

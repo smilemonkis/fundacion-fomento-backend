@@ -24,6 +24,8 @@ public class OportunidadService {
                 .tipo(Oportunidad.TipoEnum.valueOf(req.tipo()))
                 .fechaLimite(req.fechaLimite())
                 .enlace(req.enlace())
+                .activo(true)
+                .estado(parseEstado(req.estado(), Oportunidad.EstadoEnum.ABIERTO))
                 .build();
         return toDto(oportunidadRepository.save(o));
     }
@@ -35,21 +37,24 @@ public class OportunidadService {
                 .orElseThrow(() -> new ResourceNotFoundException("Oportunidad no encontrada"));
     }
 
+    // Acepta tipo y activo — igual que el controller
     @Transactional(readOnly = true)
     public Page<OportunidadResponse> listar(String tipo, Boolean activo, Pageable pageable) {
-        Page<Oportunidad> page;
-        if (tipo != null && activo != null) {
-            page = oportunidadRepository.findByTipoAndActivo(
+        Page<Oportunidad> resultado;
+
+        if (tipo != null && !tipo.isBlank() && activo != null) {
+            resultado = oportunidadRepository.findByTipoAndActivo(
                     Oportunidad.TipoEnum.valueOf(tipo), activo, pageable);
-        } else if (tipo != null) {
-            page = oportunidadRepository.findByTipo(
+        } else if (tipo != null && !tipo.isBlank()) {
+            resultado = oportunidadRepository.findByTipo(
                     Oportunidad.TipoEnum.valueOf(tipo), pageable);
         } else if (activo != null) {
-            page = oportunidadRepository.findByActivo(activo, pageable);
+            resultado = oportunidadRepository.findByActivo(activo, pageable);
         } else {
-            page = oportunidadRepository.findAll(pageable);
+            resultado = oportunidadRepository.findAll(pageable);
         }
-        return page.map(this::toDto);
+
+        return resultado.map(this::toDto);
     }
 
     public OportunidadResponse actualizar(Integer id, UpdateOportunidadRequest req) {
@@ -63,6 +68,8 @@ public class OportunidadService {
         if (req.fechaLimite() != null) o.setFechaLimite(req.fechaLimite());
         if (req.activo()      != null) o.setActivo(req.activo());
         if (req.enlace()      != null) o.setEnlace(req.enlace());
+        if (req.estado()      != null) o.setEstado(Oportunidad.EstadoEnum.valueOf(req.estado()));
+
         return toDto(oportunidadRepository.save(o));
     }
 
@@ -72,13 +79,18 @@ public class OportunidadService {
         oportunidadRepository.delete(o);
     }
 
+    private Oportunidad.EstadoEnum parseEstado(String estado, Oportunidad.EstadoEnum defecto) {
+        if (estado == null) return defecto;
+        try { return Oportunidad.EstadoEnum.valueOf(estado); }
+        catch (Exception e) { return defecto; }
+    }
+
     private OportunidadResponse toDto(Oportunidad o) {
         return new OportunidadResponse(
                 o.getId(), o.getTitulo(), o.getDescripcion(), o.getImagenUrl(),
-                o.getTipo().name(),
-                o.getFechaLimite() != null ? o.getFechaLimite().toString() : null,
-                o.getActivo(), o.getEnlace(),
-                o.getCreatedAt().toString(), o.getUpdatedAt().toString()
+                o.getTipo().name(), o.getFechaLimite(), o.getActivo(),
+                o.getEnlace(), o.getEstado().name(),
+                o.getCreatedAt(), o.getUpdatedAt()
         );
     }
 }

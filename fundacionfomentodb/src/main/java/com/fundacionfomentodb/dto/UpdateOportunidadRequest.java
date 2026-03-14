@@ -3,11 +3,12 @@ package com.fundacionfomentodb.dto;
 import java.time.LocalDate;
 
 public record UpdateOportunidadRequest(
-        String titulo,
-        String descripcion,
-        String imagenUrl,
-        String tipo,
+        String    titulo,
+        String    descripcion,
+        String    imagenUrl,
+        String    tipo,
         LocalDate fechaLimite,
-        Boolean activo,
-        String enlace
+        Boolean   activo,
+        String    enlace,
+        String    estado
 ) {}

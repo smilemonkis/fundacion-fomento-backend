@@ -1,14 +1,12 @@
 package com.fundacionfomentodb.service;
 
-import com.fundacionfomentodb.dto.CreateConvocatoriaRequest;
-import com.fundacionfomentodb.dto.UpdateConvocatoriaRequest;
-import com.fundacionfomentodb.dto.ConvocatoriaResponse;
+import com.fundacionfomentodb.dto.*;
 import com.fundacionfomentodb.entity.Convocatoria;
-import com.fundacionfomentodb.repository.ConvocatoriaRepository;
+import com.fundacionfomentodb.exception.BadRequestException;
 import com.fundacionfomentodb.exception.ResourceNotFoundException;
+import com.fundacionfomentodb.repository.ConvocatoriaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,104 +17,98 @@ public class ConvocatoriaService {
 
     private final ConvocatoriaRepository convocatoriaRepository;
 
-    public ConvocatoriaResponse crearConvocatoria(CreateConvocatoriaRequest request) {
-        Convocatoria convocatoria = Convocatoria.builder()
-                .titulo(request.titulo())
-                .descripcion(request.descripcion())
-                .fechaInicio(request.fechaInicio())
-                .fechaFin(request.fechaFin())
+    public ConvocatoriaResponse crearConvocatoria(CreateConvocatoriaRequest req) {
+        validarFechas(req.fechaInicio(), req.fechaFin());
+        Convocatoria c = Convocatoria.builder()
+                .titulo(req.titulo())
+                .descripcion(req.descripcion())
+                .fechaInicio(req.fechaInicio())
+                .fechaFin(req.fechaFin())
                 .activa(true)
+                .estado(parseEstado(req.estado(), Convocatoria.EstadoEnum.ABIERTO))
+                .imagenUrl(req.imagenUrl())
                 .build();
-
-        Convocatoria convocatoriaGuardada = convocatoriaRepository.save(convocatoria);
-        return toResponseDto(convocatoriaGuardada);
+        return toDto(convocatoriaRepository.save(c));
     }
 
     @Transactional(readOnly = true)
     public ConvocatoriaResponse obtenerConvocatoriaPorId(Integer id) {
         return convocatoriaRepository.findById(id)
-                .map(this::toResponseDto)
+                .map(this::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Convocatoria no encontrada"));
     }
 
     @Transactional(readOnly = true)
     public Page<ConvocatoriaResponse> listarConvocatorias(Boolean activa, Pageable pageable) {
-        Page<Convocatoria> resultado;
-        
-        if (activa != null) {
-            resultado = convocatoriaRepository.findByActiva(activa, pageable);
-        } else {
-            resultado = convocatoriaRepository.findAll(pageable);
-        }
-        
-        return resultado.map(this::toResponseDto);
+        Page<Convocatoria> resultado = activa != null
+                ? convocatoriaRepository.findByActiva(activa, pageable)
+                : convocatoriaRepository.findAll(pageable);
+        return resultado.map(this::toDto);
     }
 
     @Transactional(readOnly = true)
     public Page<ConvocatoriaResponse> listarConvocatoriasActivas(Pageable pageable) {
-        return convocatoriaRepository.findByActiva(true, pageable)
-                .map(this::toResponseDto);
+        return convocatoriaRepository.findByActiva(true, pageable).map(this::toDto);
     }
 
-    public ConvocatoriaResponse actualizarConvocatoria(Integer id, UpdateConvocatoriaRequest request) {
-        Convocatoria convocatoria = convocatoriaRepository.findById(id)
+    public ConvocatoriaResponse actualizarConvocatoria(Integer id, UpdateConvocatoriaRequest req) {
+        Convocatoria c = convocatoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Convocatoria no encontrada"));
 
-        if (request.titulo() != null && !request.titulo().isBlank()) {
-            convocatoria.setTitulo(request.titulo());
-        }
+        if (req.titulo()      != null) c.setTitulo(req.titulo());
+        if (req.descripcion() != null) c.setDescripcion(req.descripcion());
+        if (req.imagenUrl()   != null) c.setImagenUrl(req.imagenUrl());
+        if (req.activa()      != null) c.setActiva(req.activa());
+        if (req.estado()      != null) c.setEstado(Convocatoria.EstadoEnum.valueOf(req.estado()));
 
-        if (request.descripcion() != null && !request.descripcion().isBlank()) {
-            convocatoria.setDescripcion(request.descripcion());
-        }
+        // Validar fechas solo si se están actualizando
+        var newInicio = req.fechaInicio() != null ? req.fechaInicio() : c.getFechaInicio();
+        var newFin    = req.fechaFin()    != null ? req.fechaFin()    : c.getFechaFin();
+        validarFechas(newInicio, newFin);
+        c.setFechaInicio(newInicio);
+        c.setFechaFin(newFin);
 
-        if (request.fechaInicio() != null) {
-            convocatoria.setFechaInicio(request.fechaInicio());
-        }
-
-        if (request.fechaFin() != null) {
-            convocatoria.setFechaFin(request.fechaFin());
-        }
-
-        Convocatoria convocatoriaActualizada = convocatoriaRepository.save(convocatoria);
-        return toResponseDto(convocatoriaActualizada);
+        return toDto(convocatoriaRepository.save(c));
     }
 
     public ConvocatoriaResponse activarConvocatoria(Integer id) {
-        Convocatoria convocatoria = convocatoriaRepository.findById(id)
+        Convocatoria c = convocatoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Convocatoria no encontrada"));
-        
-        convocatoria.setActiva(true);
-        Convocatoria convocatoriaActualizada = convocatoriaRepository.save(convocatoria);
-        return toResponseDto(convocatoriaActualizada);
+        c.setActiva(true);
+        return toDto(convocatoriaRepository.save(c));
     }
 
     public ConvocatoriaResponse desactivarConvocatoria(Integer id) {
-        Convocatoria convocatoria = convocatoriaRepository.findById(id)
+        Convocatoria c = convocatoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Convocatoria no encontrada"));
-        
-        convocatoria.setActiva(false);
-        Convocatoria convocatoriaActualizada = convocatoriaRepository.save(convocatoria);
-        return toResponseDto(convocatoriaActualizada);
+        c.setActiva(false);
+        return toDto(convocatoriaRepository.save(c));
     }
 
     public void eliminarConvocatoria(Integer id) {
-        Convocatoria convocatoria = convocatoriaRepository.findById(id)
+        Convocatoria c = convocatoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Convocatoria no encontrada"));
-        
-        convocatoriaRepository.delete(convocatoria);
+        convocatoriaRepository.delete(c);
     }
 
-    private ConvocatoriaResponse toResponseDto(Convocatoria convocatoria) {
+    private void validarFechas(java.time.LocalDate inicio, java.time.LocalDate fin) {
+        if (inicio != null && fin != null && !fin.isAfter(inicio)) {
+            throw new BadRequestException("La fecha de fin debe ser posterior a la fecha de inicio");
+        }
+    }
+
+    private Convocatoria.EstadoEnum parseEstado(String estado, Convocatoria.EstadoEnum defecto) {
+        if (estado == null) return defecto;
+        try { return Convocatoria.EstadoEnum.valueOf(estado); }
+        catch (Exception e) { return defecto; }
+    }
+
+    private ConvocatoriaResponse toDto(Convocatoria c) {
         return new ConvocatoriaResponse(
-                convocatoria.getId(),
-                convocatoria.getTitulo(),
-                convocatoria.getDescripcion(),
-                convocatoria.getFechaInicio(),
-                convocatoria.getFechaFin(),
-                convocatoria.getActiva(),
-                convocatoria.getCreatedAt(),
-                convocatoria.getUpdatedAt()
+                c.getId(), c.getTitulo(), c.getDescripcion(),
+                c.getFechaInicio(), c.getFechaFin(), c.getActiva(),
+                c.getEstado().name(), c.getImagenUrl(),
+                c.getCreatedAt(), c.getUpdatedAt()
         );
     }
 }

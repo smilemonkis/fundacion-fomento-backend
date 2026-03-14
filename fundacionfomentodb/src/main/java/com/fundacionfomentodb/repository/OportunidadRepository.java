@@ -4,7 +4,9 @@ import com.fundacionfomentodb.entity.Oportunidad;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface OportunidadRepository extends JpaRepository<Oportunidad, Integer> {
     Page<Oportunidad> findByActivo(Boolean activo, Pageable pageable);
     Page<Oportunidad> findByTipo(Oportunidad.TipoEnum tipo, Pageable pageable);
