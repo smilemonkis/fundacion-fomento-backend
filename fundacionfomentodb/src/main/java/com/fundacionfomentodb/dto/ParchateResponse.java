@@ -12,6 +12,7 @@ public record ParchateResponse(
         String ubicacion,
         String direccion,
         String urlMapa,
+        String enlace,
         String fechaEvento,
         Boolean activo,
         String createdAt,

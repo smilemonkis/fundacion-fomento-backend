@@ -31,11 +31,9 @@ public class Parchate {
     @OneToMany(mappedBy = "parchate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ParchateImagen> galeria = new ArrayList<>();
 
-    // Etiqueta libre definida por el admin: "Festival", "Senderismo", etc.
     @Column(nullable = false, length = 100)
     private String tipo;
 
-    // Municipio: "Jardín", "Jericó", etc. — primera letra mayúscula
     @Column(nullable = false, length = 150)
     private String ubicacion;
 
@@ -45,12 +43,16 @@ public class Parchate {
     @Column(length = 500)
     private String urlMapa;
 
-    // Null si es lugar permanente; con fecha si es evento
+    // Enlace externo opcional (registro, más info, etc.)
+    @Column(length = 500)
+    private String enlace;
+
     @Column
     private LocalDateTime fechaEvento;
 
     @Column(nullable = false)
-    private Boolean activo;
+    @Builder.Default
+    private Boolean activo = true;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -63,16 +65,16 @@ public class Parchate {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         if (this.activo == null) this.activo = true;
-        // Normalizar ubicación: primera letra mayúscula
-        if (this.ubicacion != null && !this.ubicacion.isBlank()) {
-            this.ubicacion = this.ubicacion.substring(0, 1).toUpperCase()
-                    + this.ubicacion.substring(1).toLowerCase();
-        }
+        normalizarUbicacion();
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+        normalizarUbicacion();
+    }
+
+    private void normalizarUbicacion() {
         if (this.ubicacion != null && !this.ubicacion.isBlank()) {
             this.ubicacion = this.ubicacion.substring(0, 1).toUpperCase()
                     + this.ubicacion.substring(1).toLowerCase();

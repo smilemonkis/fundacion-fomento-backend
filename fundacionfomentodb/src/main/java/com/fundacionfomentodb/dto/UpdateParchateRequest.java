@@ -12,6 +12,7 @@ public record UpdateParchateRequest(
         String ubicacion,
         String direccion,
         String urlMapa,
+        String enlace,
         LocalDateTime fechaEvento,
         Boolean activo
 ) {}

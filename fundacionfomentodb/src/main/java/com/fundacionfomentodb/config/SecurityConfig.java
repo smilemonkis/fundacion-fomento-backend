@@ -62,7 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/donaciones/publica").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/suscripciones").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/suscripciones/email/**").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/api/v1/aliados-destacados").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
