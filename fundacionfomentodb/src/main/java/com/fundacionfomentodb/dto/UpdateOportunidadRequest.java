@@ -10,5 +10,7 @@ public record UpdateOportunidadRequest(
         LocalDate fechaLimite,
         Boolean   activo,
         String    enlace,
-        String    estado
+        String    estado,
+        String    textoBoton,
+        Boolean   mostrarBoton
 ) {}

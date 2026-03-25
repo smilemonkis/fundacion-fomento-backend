@@ -37,17 +37,17 @@ public class ParchateController {
             @RequestParam(defaultValue = "0")  int page,
             @RequestParam(defaultValue = "12") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(parchateService.listar(tipo, ubicacion, activo, pageable));
+        return ResponseEntity.ok(parchateService.listar(activo, tipo, ubicacion, pageable));
     }
 
     @GetMapping("/tipos")
     public ResponseEntity<List<String>> tipos() {
-        return ResponseEntity.ok(parchateService.obtenerTipos());
+        return ResponseEntity.ok(parchateService.listarTipos());
     }
 
     @GetMapping("/ubicaciones")
     public ResponseEntity<List<String>> ubicaciones() {
-        return ResponseEntity.ok(parchateService.obtenerUbicaciones());
+        return ResponseEntity.ok(parchateService.listarUbicaciones());
     }
 
     @PutMapping("/{id}")

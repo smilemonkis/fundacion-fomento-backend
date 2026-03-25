@@ -12,6 +12,9 @@ public record ConvocatoriaResponse(
         Boolean       activa,
         String        estado,
         String        imagenUrl,
+        String        enlace,
+        String        textoBoton,
+        Boolean       mostrarBoton,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

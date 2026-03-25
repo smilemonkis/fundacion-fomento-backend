@@ -43,7 +43,6 @@ public class Parchate {
     @Column(length = 500)
     private String urlMapa;
 
-    // Enlace externo opcional (registro, más info, etc.)
     @Column(length = 500)
     private String enlace;
 
@@ -53,6 +52,16 @@ public class Parchate {
     @Column(nullable = false)
     @Builder.Default
     private Boolean activo = true;
+
+    // ── Botón configurable ──────────────────────────────────────
+    @Column(length = 100)
+    @Builder.Default
+    private String textoBoton = "Más información";
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean mostrarBoton = false;
+    // ────────────────────────────────────────────────────────────
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -64,7 +73,9 @@ public class Parchate {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.activo == null) this.activo = true;
+        if (this.activo       == null) this.activo       = true;
+        if (this.mostrarBoton == null) this.mostrarBoton = false;
+        if (this.textoBoton   == null) this.textoBoton   = "Más información";
         normalizarUbicacion();
     }
 

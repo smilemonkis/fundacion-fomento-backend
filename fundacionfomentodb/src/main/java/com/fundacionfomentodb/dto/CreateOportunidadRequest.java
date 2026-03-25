@@ -10,5 +10,7 @@ public record CreateOportunidadRequest(
         @NotBlank String tipo,
         LocalDate fechaLimite,
         String    enlace,
-        String    estado
+        String    estado,
+        String    textoBoton,
+        Boolean   mostrarBoton
 ) {}

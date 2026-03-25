@@ -14,5 +14,7 @@ public record UpdateParchateRequest(
         String urlMapa,
         String enlace,
         LocalDateTime fechaEvento,
-        Boolean activo
+        Boolean activo,
+        String textoBoton,
+        Boolean mostrarBoton
 ) {}

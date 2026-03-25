@@ -13,6 +13,8 @@ public record OportunidadResponse(
         Boolean       activo,
         String        enlace,
         String        estado,
+        String        textoBoton,
+        Boolean       mostrarBoton,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}

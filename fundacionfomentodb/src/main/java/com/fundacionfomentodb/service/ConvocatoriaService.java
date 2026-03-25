@@ -27,6 +27,9 @@ public class ConvocatoriaService {
                 .activa(true)
                 .estado(parseEstado(req.estado(), Convocatoria.EstadoEnum.ABIERTO))
                 .imagenUrl(req.imagenUrl())
+                .enlace(req.enlace())
+                .textoBoton(req.textoBoton() != null ? req.textoBoton() : "Inscribirme")
+                .mostrarBoton(req.mostrarBoton() != null ? req.mostrarBoton() : true)
                 .build();
         return toDto(convocatoriaRepository.save(c));
     }
@@ -55,13 +58,15 @@ public class ConvocatoriaService {
         Convocatoria c = convocatoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Convocatoria no encontrada"));
 
-        if (req.titulo()      != null) c.setTitulo(req.titulo());
-        if (req.descripcion() != null) c.setDescripcion(req.descripcion());
-        if (req.imagenUrl()   != null) c.setImagenUrl(req.imagenUrl());
-        if (req.activa()      != null) c.setActiva(req.activa());
-        if (req.estado()      != null) c.setEstado(Convocatoria.EstadoEnum.valueOf(req.estado()));
+        if (req.titulo()       != null) c.setTitulo(req.titulo());
+        if (req.descripcion()  != null) c.setDescripcion(req.descripcion());
+        if (req.imagenUrl()    != null) c.setImagenUrl(req.imagenUrl());
+        if (req.activa()       != null) c.setActiva(req.activa());
+        if (req.estado()       != null) c.setEstado(Convocatoria.EstadoEnum.valueOf(req.estado()));
+        if (req.enlace()       != null) c.setEnlace(req.enlace());
+        if (req.textoBoton()   != null) c.setTextoBoton(req.textoBoton());
+        if (req.mostrarBoton() != null) c.setMostrarBoton(req.mostrarBoton());
 
-        // Validar fechas solo si se están actualizando
         var newInicio = req.fechaInicio() != null ? req.fechaInicio() : c.getFechaInicio();
         var newFin    = req.fechaFin()    != null ? req.fechaFin()    : c.getFechaFin();
         validarFechas(newInicio, newFin);
@@ -92,9 +97,8 @@ public class ConvocatoriaService {
     }
 
     private void validarFechas(java.time.LocalDate inicio, java.time.LocalDate fin) {
-        if (inicio != null && fin != null && !fin.isAfter(inicio)) {
+        if (inicio != null && fin != null && !fin.isAfter(inicio))
             throw new BadRequestException("La fecha de fin debe ser posterior a la fecha de inicio");
-        }
     }
 
     private Convocatoria.EstadoEnum parseEstado(String estado, Convocatoria.EstadoEnum defecto) {
@@ -108,6 +112,7 @@ public class ConvocatoriaService {
                 c.getId(), c.getTitulo(), c.getDescripcion(),
                 c.getFechaInicio(), c.getFechaFin(), c.getActiva(),
                 c.getEstado().name(), c.getImagenUrl(),
+                c.getEnlace(), c.getTextoBoton(), c.getMostrarBoton(),
                 c.getCreatedAt(), c.getUpdatedAt()
         );
     }

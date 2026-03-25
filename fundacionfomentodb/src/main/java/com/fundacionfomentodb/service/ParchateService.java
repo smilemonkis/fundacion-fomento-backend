@@ -31,7 +31,9 @@ public class ParchateService {
                 .urlMapa(req.urlMapa())
                 .enlace(req.enlace())
                 .fechaEvento(req.fechaEvento())
-                .activo(true)
+                .activo(req.activo() != null ? req.activo() : true)
+                .textoBoton(req.textoBoton() != null ? req.textoBoton() : "Más información")
+                .mostrarBoton(req.mostrarBoton() != null ? req.mostrarBoton() : false)
                 .build();
         agregarGaleria(p, req.galeria());
         return toDto(parchateRepository.save(p));
@@ -44,12 +46,10 @@ public class ParchateService {
                 .orElseThrow(() -> new ResourceNotFoundException("Actividad no encontrada"));
     }
 
-    // Nombre exacto que usa el controller: listar(tipo, ubicacion, activo, pageable)
     @Transactional(readOnly = true)
-    public Page<ParchateResponse> listar(String tipo, String ubicacion, Boolean activo, Pageable pageable) {
+    public Page<ParchateResponse> listar(Boolean activo, String tipo, String ubicacion, Pageable pageable) {
         boolean filtrarActivo = activo != null ? activo : true;
         Page<Parchate> page;
-
         if (tipo != null && !tipo.isBlank() && ubicacion != null && !ubicacion.isBlank()) {
             page = parchateRepository.findByTipoIgnoreCaseAndUbicacionIgnoreCaseAndActivo(tipo, ubicacion, filtrarActivo, pageable);
         } else if (tipo != null && !tipo.isBlank()) {
@@ -64,14 +64,13 @@ public class ParchateService {
         return page.map(this::toDto);
     }
 
-    // Nombres exactos que usa el controller
     @Transactional(readOnly = true)
-    public List<String> obtenerTipos() {
+    public List<String> listarTipos() {
         return parchateRepository.findTiposActivos();
     }
 
     @Transactional(readOnly = true)
-    public List<String> obtenerUbicaciones() {
+    public List<String> listarUbicaciones() {
         return parchateRepository.findUbicacionesActivas();
     }
 
@@ -79,16 +78,18 @@ public class ParchateService {
         Parchate p = parchateRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Actividad no encontrada"));
 
-        if (req.titulo()      != null) p.setTitulo(req.titulo());
-        if (req.descripcion() != null) p.setDescripcion(req.descripcion());
-        if (req.imagenUrl()   != null) p.setImagenUrl(req.imagenUrl());
-        if (req.tipo()        != null) p.setTipo(req.tipo());
-        if (req.ubicacion()   != null) p.setUbicacion(req.ubicacion());
-        if (req.direccion()   != null) p.setDireccion(req.direccion());
-        if (req.urlMapa()     != null) p.setUrlMapa(req.urlMapa());
-        if (req.enlace()      != null) p.setEnlace(req.enlace());
-        if (req.fechaEvento() != null) p.setFechaEvento(req.fechaEvento());
-        if (req.activo()      != null) p.setActivo(req.activo());
+        if (req.titulo()       != null) p.setTitulo(req.titulo());
+        if (req.descripcion()  != null) p.setDescripcion(req.descripcion());
+        if (req.imagenUrl()    != null) p.setImagenUrl(req.imagenUrl());
+        if (req.tipo()         != null) p.setTipo(req.tipo());
+        if (req.ubicacion()    != null) p.setUbicacion(req.ubicacion());
+        if (req.direccion()    != null) p.setDireccion(req.direccion());
+        if (req.urlMapa()      != null) p.setUrlMapa(req.urlMapa());
+        if (req.enlace()       != null) p.setEnlace(req.enlace());
+        if (req.fechaEvento()  != null) p.setFechaEvento(req.fechaEvento());
+        if (req.activo()       != null) p.setActivo(req.activo());
+        if (req.textoBoton()   != null) p.setTextoBoton(req.textoBoton());
+        if (req.mostrarBoton() != null) p.setMostrarBoton(req.mostrarBoton());
 
         if (req.galeria() != null) {
             p.getGaleria().clear();
@@ -126,7 +127,7 @@ public class ParchateService {
                 galeria, p.getTipo(), p.getUbicacion(), p.getDireccion(),
                 p.getUrlMapa(), p.getEnlace(),
                 p.getFechaEvento() != null ? p.getFechaEvento().toString() : null,
-                p.getActivo(),
+                p.getActivo(), p.getTextoBoton(), p.getMostrarBoton(),
                 p.getCreatedAt().toString(), p.getUpdatedAt().toString()
         );
     }

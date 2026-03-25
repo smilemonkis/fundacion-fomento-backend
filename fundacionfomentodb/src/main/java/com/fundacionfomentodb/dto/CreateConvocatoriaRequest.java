@@ -9,5 +9,8 @@ public record CreateConvocatoriaRequest(
         LocalDate fechaInicio,
         LocalDate fechaFin,
         String    estado,
-        String    imagenUrl
+        String    imagenUrl,
+        String    enlace,
+        String    textoBoton,
+        Boolean   mostrarBoton
 ) {}

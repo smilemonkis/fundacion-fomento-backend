@@ -23,7 +23,6 @@ public class Convocatoria {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String descripcion;
 
-    // Fechas opcionales
     @Column
     private LocalDate fechaInicio;
 
@@ -34,7 +33,6 @@ public class Convocatoria {
     @Builder.Default
     private Boolean activa = true;
 
-    // Estado manual controlado por el admin
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
@@ -42,6 +40,19 @@ public class Convocatoria {
 
     @Column(length = 500)
     private String imagenUrl;
+
+    // ── Botón configurable ──────────────────────────────────────
+    @Column(length = 500)
+    private String enlace;
+
+    @Column(length = 100)
+    @Builder.Default
+    private String textoBoton = "Inscribirme";
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean mostrarBoton = true;
+    // ────────────────────────────────────────────────────────────
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -57,8 +68,10 @@ public class Convocatoria {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.estado == null) this.estado = EstadoEnum.ABIERTO;
-        if (this.activa == null) this.activa = true;
+        if (this.estado       == null) this.estado       = EstadoEnum.ABIERTO;
+        if (this.activa       == null) this.activa       = true;
+        if (this.mostrarBoton == null) this.mostrarBoton = true;
+        if (this.textoBoton   == null) this.textoBoton   = "Inscribirme";
     }
 
     @PreUpdate

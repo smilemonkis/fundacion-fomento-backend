@@ -15,6 +15,8 @@ public record ParchateResponse(
         String enlace,
         String fechaEvento,
         Boolean activo,
+        String textoBoton,
+        Boolean mostrarBoton,
         String createdAt,
         String updatedAt
 ) {}

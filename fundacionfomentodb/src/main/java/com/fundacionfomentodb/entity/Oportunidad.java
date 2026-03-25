@@ -30,7 +30,6 @@ public class Oportunidad {
     @Column(nullable = false)
     private TipoEnum tipo;
 
-    // Fecha opcional
     @Column
     private LocalDate fechaLimite;
 
@@ -41,11 +40,20 @@ public class Oportunidad {
     @Column(length = 500)
     private String enlace;
 
-    // Estado manual controlado por el admin
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
     private EstadoEnum estado = EstadoEnum.ABIERTO;
+
+    // ── Botón configurable ──────────────────────────────────────
+    @Column(length = 100)
+    @Builder.Default
+    private String textoBoton = "Aplicar";
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean mostrarBoton = true;
+    // ────────────────────────────────────────────────────────────
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -60,8 +68,10 @@ public class Oportunidad {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.activo  == null) this.activo  = true;
-        if (this.estado  == null) this.estado  = EstadoEnum.ABIERTO;
+        if (this.activo       == null) this.activo       = true;
+        if (this.estado       == null) this.estado       = EstadoEnum.ABIERTO;
+        if (this.mostrarBoton == null) this.mostrarBoton = true;
+        if (this.textoBoton   == null) this.textoBoton   = "Aplicar";
     }
 
     @PreUpdate

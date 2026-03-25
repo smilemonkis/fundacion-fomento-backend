@@ -5,14 +5,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record CreateParchateRequest(
-        @NotBlank(message = "El título es requerido")   String titulo,
-        @NotBlank(message = "La descripción es requerida") String descripcion,
+        @NotBlank String titulo,
+        @NotBlank String descripcion,
         String imagenUrl,
         List<ImagenRequest> galeria,
-        @NotBlank(message = "El tipo es requerido")     String tipo,
-        @NotBlank(message = "La ubicación es requerida") String ubicacion,
+        @NotBlank String tipo,
+        @NotBlank String ubicacion,
         String direccion,
         String urlMapa,
         String enlace,
-        LocalDateTime fechaEvento
+        LocalDateTime fechaEvento,
+        Boolean activo,
+        String textoBoton,
+        Boolean mostrarBoton
 ) {}

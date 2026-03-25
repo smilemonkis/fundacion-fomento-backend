@@ -9,5 +9,8 @@ public record UpdateConvocatoriaRequest(
         LocalDate fechaFin,
         Boolean   activa,
         String    estado,
-        String    imagenUrl
+        String    imagenUrl,
+        String    enlace,
+        String    textoBoton,
+        Boolean   mostrarBoton
 ) {}
